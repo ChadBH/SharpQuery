@@ -108,6 +108,8 @@ namespace SharpQuery
 
         private static void Set(object target, string compoundProperty, string value)
         {
+            if (target == null || string.IsNullOrWhiteSpace(compoundProperty)) return;
+
             string[] bits = compoundProperty.Split('.');
             for (int i = 0; i < bits.Length - 1; i++)
             {
@@ -115,8 +117,22 @@ namespace SharpQuery
                 target = propertyToGet.GetValue(target, null);
             }
             PropertyInfo propertyToSet = target.GetType().GetProperty(bits.Last());
-            var deserialized = JsonConvert.DeserializeObject(value, propertyToSet.PropertyType);
-            propertyToSet.SetValue(target, deserialized, null);
+
+            if (IsJson(value))
+            {
+                var deserialized = JsonConvert.DeserializeObject(value, propertyToSet.PropertyType);
+                propertyToSet.SetValue(target, deserialized);
+                return;
+            }
+
+            propertyToSet.SetValue(target, value);
+        }
+
+        private static bool IsJson(string input)
+        {
+            //todo: obviously need to improve on this
+            //https://stackoverflow.com/questions/23906220/deserialize-json-in-a-tryparse-way
+            return !string.IsNullOrWhiteSpace(input) && (input.Contains("{") || input.Contains("["));
         }
     }
 }

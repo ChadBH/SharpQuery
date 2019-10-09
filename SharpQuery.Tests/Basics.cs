@@ -63,7 +63,28 @@ namespace SharpQuery.Tests
             Assert.IsNotNull(intMatch);
             var noIntMatch = query3.Where("Nested.NestedInts.Any(i => i > 4)").Result;
             Assert.IsNull(noIntMatch);
+        }
 
+        [TestMethod]
+        public void SimpleTypes()
+        {
+            var helloWorld = new MyClass {
+              String1 = "Hello",
+              String2 = "World"
+            };
+
+            var halloWorld = new Query<MyClass>(helloWorld)
+                .Where("String1 == \"Hello\"")
+                .Set("String1", "Hallo")
+                .Result;
+
+            Assert.AreEqual("Hallo", halloWorld.String1);
+        }
+
+        public class MyClass
+        {
+            public string String1 { get; set; }
+            public string String2 { get; set; }
         }
     }
 }
