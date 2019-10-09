@@ -40,6 +40,10 @@ namespace SharpQuery.Tests
 
             Assert.IsTrue(list.Nested.NestedStrings.Any());
             Assert.IsTrue(list.Nested.NestedInts.Any());
+
+            var query4 = new Query<TestObject>(new TestObject());
+            var fromJson = query4.Set("Nested", "{\"NestedStrings\": [\"1\", \"2\"]}").Result;
+            Assert.IsTrue(fromJson.Nested.NestedStrings.Any());
         }
 
         [TestMethod]
@@ -59,6 +63,7 @@ namespace SharpQuery.Tests
             Assert.IsNotNull(intMatch);
             var noIntMatch = query3.Where("Nested.NestedInts.Any(i => i > 4)").Result;
             Assert.IsNull(noIntMatch);
+
         }
     }
 }

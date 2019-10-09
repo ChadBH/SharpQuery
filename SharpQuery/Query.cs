@@ -5,7 +5,6 @@ using System.Linq.Dynamic.Core;
 using System.Reflection;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace SharpQuery
 {
@@ -111,25 +110,8 @@ namespace SharpQuery
                 target = propertyToGet.GetValue(target, null);
             }
             PropertyInfo propertyToSet = target.GetType().GetProperty(bits.Last());
-            var deserialized = JsonConvert.DeserializeObject(value);
-            var typed = SetType(deserialized);
-            propertyToSet.SetValue(target, typed, null);
-        }
-
-        private static object SetType(object deserialized)
-        {
-            if(deserialized.GetType() == typeof(JArray))
-            {
-                //TODO: need a better way to do this
-                try {
-                    return ((JArray)deserialized).ToObject(typeof(List<int>));
-                }
-                catch (JsonReaderException)
-                {
-                    return ((JArray)deserialized).ToObject(typeof(List<string>));
-                }
-            }
-            return deserialized;
+            var deserialized = JsonConvert.DeserializeObject(value, propertyToSet.PropertyType);
+            propertyToSet.SetValue(target, deserialized, null);
         }
     }
 }
