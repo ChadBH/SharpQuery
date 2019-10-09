@@ -15,6 +15,11 @@ namespace SharpQuery
             return Results.FirstOrDefault();
         } }
 
+        public bool HasMatch
+        { get {
+            return Result != null;
+        } }
+
         private Query()
         {
             Results = new List<T>().AsQueryable();
