@@ -32,7 +32,7 @@ namespace SharpQuery.Tests
             Assert.IsTrue(ints.Nested.NestedInts.Any());
 
             var list = new Query<TestObject>(new TestObject())
-                .Set(new Dictionary<string, string> {
+                .Set(new Dictionary<string, object> {
                     {"Nested.NestedStrings", "[\"hello\", \"world\"]" },
                     {"Nested.NestedInts", "[1, 2]" }
                 })
@@ -51,17 +51,17 @@ namespace SharpQuery.Tests
         {
             var testObj = new TestObject("1", "2", "3");
             var query = new Query<TestObject>(testObj);
-            var match = query.Where("Nested.NestedStrings.Any(ns => ns == \"1\")").Result;
+            var match = query.If("Nested.NestedStrings.Any(ns => ns == \"1\")").Result;
             Assert.IsNotNull(match);
 
             var query2 = new Query<TestObject>(testObj);
-            var noMatch = query2.Where("Nested.NestedStrings.Any(ns => ns == \"4\")").Result;
+            var noMatch = query2.If("Nested.NestedStrings.Any(ns => ns == \"4\")").Result;
             Assert.IsNull(noMatch);
 
             var query3 = new Query<TestObject>(new TestObject(1, 2, 3, 4));
-            var intMatch = query3.Where("Nested.NestedInts.Any(i => i < 4)").Result;
+            var intMatch = query3.If("Nested.NestedInts.Any(i => i < 4)").Result;
             Assert.IsNotNull(intMatch);
-            var noIntMatch = query3.Where("Nested.NestedInts.Any(i => i > 4)").Result;
+            var noIntMatch = query3.If("Nested.NestedInts.Any(i => i > 4)").Result;
             Assert.IsNull(noIntMatch);
         }
 
@@ -74,7 +74,7 @@ namespace SharpQuery.Tests
             };
 
             var halloWorld = new Query<MyClass>(helloWorld)
-                .Where("String1 == \"Hello\"")
+                .If("String1 == \"Hello\"")
                 .Set("String1", "Hallo")
                 .Result;
 
